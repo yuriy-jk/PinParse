@@ -8,7 +8,7 @@ chromedriver = '/Users/yuriykhen/chromedriver'
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
 options.add_argument("--start-maximized")
-options.add_argument('--window-size=7000,1080')
+options.add_argument('--window-size=2560,1440')
 driver = webdriver.Chrome(executable_path=chromedriver, chrome_options=options)
 
 
@@ -32,21 +32,27 @@ def get_html(url):
 
 def parse(html):
     board = html
-    print(type(board))
+    #print(board)
     #soup = BeautifulSoup(board, 'lxml')
     link = re.findall(r'https://i.pinimg.com/474x/.+?jpg', board)
     link1 = re.findall(r'https://i.pinimg.com/originals/.+?jpg', board)
     #link = soup.find_all(string=re.compile('https://i.pinimg.com/474x/.+?jpg'))
     link = set(link)
-    link1 = set(link1)
+    #link1 = set(link1)
     #print(len(link1))
     #print(len(link))
     return link
 
 
-b = get_html('https://www.pinterest.ru/yuriyjk/1045/')
+parse_link = 'https://www.pinterest.ru/yuriyjk/11-march/'
+
+b = get_html(parse_link)
 links = parse(b)
+
+folder = parse_link[25:].replace('/', '_')
+os.makedirs('/Users/yuriykhen/Pinterest___Parse/{}'.format(folder), exist_ok=True)
 for i in links:
-    destination = i.rsplit('/', 1)[1]
-    destin = os.path.join('/Users/yuriykhen/Pinterest___Parse', destination)
-    urllib.request.urlretrieve(i, destin)
+    original = i.replace('474x', 'originals')
+    name = i.rsplit('/', 1)[1]
+    destination = os.path.join('/Users/yuriykhen/Pinterest___Parse/' + folder, name)
+    urllib.request.urlretrieve(original, destination)
